@@ -48,6 +48,15 @@ public class GameManager : MonoBehaviour
         }
         grid = new GameGrid(w, h);
         victoryPanel.SetActive(false);
+        gameFinished = false;
+    }
+
+    public void NewGame()
+    {
+        grid = new GameGrid(w, h);
+        UpdateColors();
+        victoryPanel.SetActive(false);
+        gameFinished = false;
     }
 
     void UpdateColors()
