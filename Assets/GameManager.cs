@@ -79,7 +79,10 @@ public class GameManager : MonoBehaviour
         if(!gameFinished)
         {
             if(grid.FillCell(x, 0))
+            {
+                UpdateColors();
                 ShowVictoryPanel(0);
+            }
             else
             {
                 UpdateColors();
