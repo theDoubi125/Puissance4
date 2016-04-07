@@ -6,7 +6,34 @@ public class MCTSIA : MonoBehaviour
     public int playerId;
     public int tries = 1000;
     public int tryMoves = 10;
+
+    public UnityEngine.UI.InputField inputFieldTries;
+    public UnityEngine.UI.InputField inputFieldTryMoves;
     
+    void Start()
+    {
+        inputFieldTries.text = tries.ToString();
+        inputFieldTryMoves.text = tryMoves.ToString();
+    }
+
+    public void SetTries()
+    {
+        int _tries = int.Parse(inputFieldTries.text);
+        if (_tries <= 0)
+            _tries = 0;
+
+        tries = _tries;
+    }
+
+    public void SetTryMoves()
+    {
+        int _tryMoves = int.Parse(inputFieldTryMoves.text);
+        if (_tryMoves <= 0)
+            _tryMoves = 0;
+
+        tryMoves = _tryMoves;
+    }
+
     public int CalcNextAction(GameGrid grid, int playerTurn)
     {
         int[] triesPerMove = new int[grid.w];
