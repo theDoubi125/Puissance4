@@ -2,6 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public class IntVec
+{
+    public int x, y;
+
+    public IntVec(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+}
+
 public class GameGrid
 {
     public int[] cells;
@@ -23,6 +34,13 @@ public class GameGrid
         this.cells = new int[w * h];
         for (int i = 0; i < w * h; i++)
             cells[i] = grid.cells[i];
+    }
+
+    public int GetLastCellY(int x)
+    {
+        int y;
+        for (y = 0; y < h && cells[x + y * w] >= 0; y++) ;
+        return y - 1;
     }
 
     public bool FillCell(int x, int playerId)
@@ -171,5 +189,34 @@ public class GameGrid
                 return true;
         }
         return false;
+    }
+
+    public List<IntVec> GetVictoryCells(int x)
+    {
+        int y = GetLastCellY(x);
+        List<IntVec> result = new List<IntVec>();
+        int[] vecx = new int[] { 1, 0, 1, 1 };
+        int[] vecy = new int[] { 0, 1, 1, -1 };
+
+        for (int i = 0; i < vecx.Length; i++)
+        {
+            int jmax = 1, jmin = 1;
+            while (x + vecx[i] * jmax >= 0 && x + vecx[i] * jmax < w
+                && y + vecy[i] * jmax >= 0 && y + vecy[i] * jmax < h
+                && CellAt(x + vecx[i] * jmax, y + vecy[i] * jmax) == CellAt(x, y))
+                jmax++;
+            while (x - vecx[i] * jmin >= 0 && x - vecx[i] * jmin < w
+                && y - vecy[i] * jmin >= 0 && y - vecy[i] * jmin < h
+                && CellAt(x - vecx[i] * jmin, y - vecy[i] * jmin) == CellAt(x, y))
+                jmin++;
+            Debug.Log(jmax + " " + jmin);
+            Debug.Log(CellAt(x, y));
+            if (jmax + jmin - 1 >= 4)
+            {
+                for (int j = 0; j < jmax + jmin - 1; j++)
+                    result.Add(new IntVec(x + vecx[i] * (j - jmin + 1), y + vecy[i] * (j - jmin + 1)));
+            }
+        }
+        return result;
     }
 }
