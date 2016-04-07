@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 [ExecuteInEditMode]
@@ -9,16 +10,21 @@ public class GameManager : MonoBehaviour
     private int m_w, m_h;
     public int w { get { return m_w; } set { int oldw = m_w; m_w = value; if (oldw != m_w) Reset(); } }
     public int h { get { return m_h; } set { int oldh = m_h;  m_h = value; if(oldh != m_h) Reset(); } }
+
     public Transform cellPrefab;
+    public GameObject victoryPanel;
+    public Text victoryText;
+    public Color[] playerColors = { Color.red, Color.green };
+    public Color[] victoryColors = { Color.blue, Color.yellow };
+
+
     private GameGrid grid;
     private GameCell[] cells;
-    private Color[] playerColors = new Color[] { Color.red, Color.green };
     private int playerTurn = 0;
     private int lastActionX = -1;
     private MCTSIA ia;
-    public GameObject victoryPanel;
-    public Text victoryText;
     private bool gameFinished = false;
+
 
 	void Start()
     {
@@ -74,12 +80,38 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void UpdateVictoryColors(int x)
+    {
+        for (int i = 0; i < w; i++)
+        {
+            for (int j = 0; j < h; j++)
+            {
+                Image img = cells[i + j * w].GetComponent<Image>();
+                if (grid.CellAt(i, j) >= 0)
+                    img.color = playerColors[grid.CellAt(i, j)];
+                else
+                    img.color = Color.white;
+            }
+        }
+        
+        List<IntVec> victoryCells = grid.GetVictoryCells(x);
+        for (int k = 0; k < victoryCells.Count; k++)
+        {
+            print(victoryCells[k].x + " " + victoryCells[k].y);
+            Image img = cells[victoryCells[k].x + victoryCells[k].y * w].GetComponent<Image>();
+            img.color = victoryColors[grid.CellAt(victoryCells[k].x, victoryCells[k].y)];
+        }
+    }
+
     public void ActionAt(int x)
     {
         if(!gameFinished)
         {
             if(grid.FillCell(x, 0))
+            {
+                UpdateVictoryColors(x);
                 ShowVictoryPanel(0);
+            }
             else
             {
                 UpdateColors();
@@ -88,7 +120,7 @@ public class GameManager : MonoBehaviour
                 int iaAction = ia.CalcNextAction(grid, 1);
                 if (grid.FillCell(iaAction, 1))
                 {
-                    UpdateColors();
+                    UpdateVictoryColors(iaAction);
                     ShowVictoryPanel(1);
                 }
                 else

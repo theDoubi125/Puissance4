@@ -40,9 +40,7 @@ public class MCTSIA : MonoBehaviour
         int[] fitnessPerMove = new int[grid.w];
         for(int i=0; i< tries; i++)
         {
-            int x = (int)(Random.value * grid.w);
-            if (x == grid.w)
-                x = grid.w - 1;
+            int x = Random.Range(0, grid.w);
             fitnessPerMove[x] += MakeTry(x, playerTurn, grid);
             triesPerMove[x]++;
         }
