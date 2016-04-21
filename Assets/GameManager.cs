@@ -25,6 +25,12 @@ public class GameManager : MonoBehaviour
     private MCTSIA ia;
     private bool gameFinished = false;
 
+    private bool useThreads = true;
+
+    public void setUseThreads()
+    {
+        useThreads = !useThreads;
+    }
 
 	void Start()
     {
@@ -105,7 +111,7 @@ public class GameManager : MonoBehaviour
 
     public void ActionAt(int x)
     {
-        if(!gameFinished)
+        if (!gameFinished)
         {
             if(grid.FillCell(x, 0))
             {
@@ -117,7 +123,12 @@ public class GameManager : MonoBehaviour
                 UpdateColors();
                 lastActionX = x;
 
-                int iaAction = ia.CalcNextAction(grid, 1);
+                int iaAction;
+                if (useThreads)
+                    iaAction = ia.CalcNextActionParallel(grid, 1);
+                else
+                    iaAction = ia.CalcNextAction(grid, 1);
+                
                 if (grid.FillCell(iaAction, 1))
                 {
                     UpdateVictoryColors(iaAction);

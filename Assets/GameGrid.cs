@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class IntVec
@@ -17,6 +16,7 @@ public class GameGrid
 {
     public int[] cells;
     public int w, h;
+    System.Random rand = new System.Random();
 
     public GameGrid(int w, int h)
     {
@@ -68,10 +68,12 @@ public class GameGrid
     public bool FillRandomCell(int playerId)
     {
         List<int> available = new List<int>();
+
         for (int i = 0; i < w; i++)
             if (cells[i + (h - 1) * w] == -1)
                 available.Add(i);
-        int id = (int)(Random.value * available.Count);
+        
+        int id = (int)(rand.NextDouble() * available.Count);
         if (id == available.Count)
             id--;
         return FillCell(available[id], playerId);
